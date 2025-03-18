@@ -2,10 +2,10 @@
 FROM python:3.11-slim
 
 # Устанавливаем рабочую директорию внутри контейнера
-WORKDIR /app
+WORKDIR /
 
 # Копируем файлы проекта
-COPY . /app
+COPY . /
 
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
