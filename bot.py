@@ -4,12 +4,16 @@ from database import init_db
 from handlers import register_all_handlers
 import os
 
-TOKEN_ENV = os.getenv("TOKEN")
-if TOKEN_ENV == None:
-    from config import TOKEN_FROM_CONFIG
-    TOKEN = TOKEN_FROM_CONFIG
-else:
-    TOKEN = TOKEN_ENV
+# Проверяем переменную окружения, иначе берём из config.py
+TOKEN = os.getenv("TOKEN", None)
+
+if TOKEN is None:
+    try:
+        from config import TOKEN_FROM_CONFIG
+        TOKEN = TOKEN_FROM_CONFIG
+    except ImportError:
+        raise RuntimeError("❌ Ошибка: Токен не найден ни в переменной окружения, ни в config.py!")
+
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
