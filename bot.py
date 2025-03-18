@@ -1,8 +1,15 @@
 import asyncio
 from aiogram import Bot, Dispatcher
-from config import TOKEN
+from config import TOKEN_FROM_CONFIG
 from database import init_db
 from handlers import register_all_handlers
+import os
+
+TOKEN_ENV = os.getenv("TOKEN")
+if TOKEN_ENV == None:
+    TOKEN = TOKEN_FROM_CONFIG
+else:
+    TOKEN = TOKEN_ENV
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
