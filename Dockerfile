@@ -1,20 +1,6 @@
-# Используем минимальный образ Python 3.11
 FROM python:3.11-slim
-
-# Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
-
-# Копируем только файлы, необходимые для установки зависимостей
-COPY requirements.txt /app/
-
-# Устанавливаем зависимости перед копированием кода (чтобы кешировался слой)
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Копируем весь код проекта
-COPY . /app/
-
-# Используем переменные окружения для конфиденциальных данных
-ENV TOKEN=${TOKEN}
-
-# Запускаем бота
-CMD ["python", "bot.py"]
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+RUN git clone --depth=1 https://github.com/ultimkorea/thoughts-warehouse.git /app
+RUN pip install --no-cache-dir -r /app/requirements.txt
+CMD ["python", "/app/bot.py"]

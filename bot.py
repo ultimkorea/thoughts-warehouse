@@ -4,7 +4,7 @@ from database import init_db
 from handlers import register_all_handlers
 import os
 # Проверяем переменную окружения, иначе берём из config.py
-TOKEN = os.getenv("TOKEN", None)
+TOKEN = os.environ("TOKEN")
 
 if TOKEN is None:
     try:
