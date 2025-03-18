@@ -1,13 +1,16 @@
 from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import TIMESTAMP, Text, ForeignKey, select, update, delete, text
 from config import DATABASE_URL
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func  # 👈 Добавляем импорт
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-# Создание асинхронного движка
-engine = create_async_engine(DATABASE_URL, echo=True)
+
+# Создание асинхронного движка SQLite
+engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
 async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 class Base(DeclarativeBase):
@@ -16,18 +19,18 @@ class Base(DeclarativeBase):
 class Tag(Base):
     __tablename__ = "tags"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
 
 class Thought(Base):
     __tablename__ = "thoughts"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(index=True)
     text: Mapped[str] = mapped_column(Text, nullable=False)
     tag_id: Mapped[int | None] = mapped_column(ForeignKey("tags.id"), nullable=True)
     image_path: Mapped[str | None] = mapped_column(nullable=True)
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=func.now())
 
     tag = relationship("Tag", lazy="joined")  # 👈 Добавляем связь
 
@@ -35,7 +38,6 @@ class Thought(Base):
 # Инициализация БД
 async def init_db():
     async with engine.begin() as conn:
-        await conn.execute(text("SET client_encoding = 'UTF8'"))
         await conn.run_sync(Base.metadata.create_all)
 
 async def add_tag(name: str) -> int:

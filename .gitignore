@@ -1,3 +1,5 @@
 .idea
 __pycache__
 .git
+config.py
+thoughts.db
