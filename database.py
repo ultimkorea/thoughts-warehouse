@@ -32,7 +32,6 @@ class Thought(Base):
 
     tag = relationship("Tag", lazy="joined")  # 👈 Добавляем связь
 
-
 # Инициализация БД
 async def init_db():
     async with engine.begin() as conn:
