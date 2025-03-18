@@ -1,13 +1,11 @@
 from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import TIMESTAMP, Text, ForeignKey, select, update, delete, text
-from config import DATABASE_URL
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Text, ForeignKey, select, update, delete
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func  # 👈 Добавляем импорт
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import sessionmaker
 
+DATABASE_URL = "sqlite+aiosqlite:///thoughts.db"
 
 # Создание асинхронного движка SQLite
 engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
